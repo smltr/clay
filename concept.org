@@ -1,0 +1,309 @@
+* Language concept
+
+I've had this idea for a while around creating a language that clicked with me.
+
+** Some ideas
+
+  clean but also meaningful syntax
+
+  how do I say it in my head when I type it?
+
+  thoughtful and useful constructs
+  - nice loops
+    - easily map/reduce maybe, but in a more intuitive way
+
+
+  - use of symbols instead of words for language constructs
+    - possibly all built in funcs could be behind a symbol representing the package containing built ins
+    - @.len()
+
+  ability to extend or change syntax
+     don't like how loops are worded? change 'for' to 'loop'
+
+  nice repl where you can edit previous lines easily
+
+  easy prints/debugging mode
+
+  easily define tests, possibly near functions as part of the definition
+
+  easy way to interface with other files
+     i like go's //embed
+     easy way to define test data
+
+  be able to define types and structs but also dynamic for easy prototyping
+
+  intuitive typing with logic
+     type BigNumber = Number that's > 100
+     this would be like an abstract type instead of using a where clause on function signature
+
+** What I like/don't like about other languages:
+
+    * Golang:
+        + simple and easy for loops and ranges
+        + fast
+        + great standard packages
+        + easy to define structs and types
+        - Not interactive
+        - no repl
+        - if err != nil
+        - no way to extend language
+    * Elixir:
+        + Very interactive, iex
+        + clean syntax
+        - not easy to define custom data types
+        - Hard to reason about looping over list (e.g. Enum.graphemes())
+        - only one paradigm, functional
+
+** Common tools that need to be in a language:
+
+    + Defining what stuff looks like: Being able to define custom types, especially with fields is important
+    + Defining what stuff does: Functions
+    + Separating stuff: Modules, namespaces
+
+** Things I encounter that stop me from wanting to start a project:
+
+    - not easy to quickly get to feedback loop where I can see what I'm doing
+    - moving between code files and terminal or web browser
+    - defining tests being cumbersome or not obvious
+
+    - trying to remember language constructs if it's a language I'm not familiar with
+    - not easily being able to navigate language constructs with autocomplete
+    - sure, if I remember that there is a strings package, I can type strings. and see some suggestions, but how do I easily bring up that there is a strings package?
+
+    - trying to decide how to structure files and modules
+    - I should be able to just start typing some code and get immediate feedback, not have to think through structure
+    - project should be like clay. just lay a lump down and start pulling parts out
+    - I should always be able to start with just one file in a directory
+
+** Some brainstorming on stynax
+
+    How about I start with a problem and try to write some pseudocode that feels natural to me
+
+    bit counting: for a given number, convert to bits and count how many 1's there are
+
+    ```
+    func countbits(n int) int
+    // int to bits
+    str = tobitstr(n) // need to define this
+    ones = count "1" in str // unique count loop type
+    return ones
+    end
+    ```
+
+    so above I noticed a few things:
+    I felt it natural to write // int to bits to indicate to myself that the first thing I want to do is convert the number to a string of bits before I wrote some code
+    this is probably because I don't know how to do it in the language but I know it's a more primitive thing that I can't easily do
+    would be cool to keep the `tobitstr(n)` in there but assign a temporary value to it for testing like
+    `str = tobitstr(n) // tmp: tobitstr() -> "10101"
+    that way I can keep writing other code while tobitstr is undefined, even calling countbits(), and see how the flow ends up without having to write out tobitstr function definition
+    I'm not having to write lines of code that I will later delete and mess up the flow, I'm using side by side comments so there is another dimension to things
+
+    I'm not sure about the count loop, but it does seem useful and I can imagine common enough to warrant something like that
+
+    there's almost this flow where there's 2 things happening when you are programming:
+
+    1. you are defining the logic of what you want to happen
+    2. you are interfacing with the specific constructs the language provides
+
+    it would be interesting if those two things were represented in the language itself
+
+    let's do another example.
+
+    Given an array of numbers, check if any of the numbers are the character codes for lower case vowels. If they are, change the array value to a string of that vowel
+
+    here was my python implementation on codewars
+
+    ```
+    def is_vow(input):
+    vowel_codes = {ord("a"), ord("e"), ord("i"), ord("o"), ord("u")}
+
+    for i, code in enumerate(input):
+        if code in vowel_codes:
+        inp[i] = chr(code)
+
+    return input
+    ```
+
+    right off the bat I don't like how we have to enumerate input in the loop. how would I know that is part of the language, just memory?
+    also, how am I supposed to know about or find out about the chr function? this seems obscure. of course I can look it up but that requires me to switch to a browser and interrupt what I'm thinking about
+
+    let's do an example of how it could be
+
+    ```
+    // ["a" "b" "c"] -> [char_code, "b" "c"]
+    func is_vow(input array) array
+    vowelcodes = {getcode("a"): "a" ...}
+
+    for i, num in input do
+        if num in vowelcodes do
+        input[i] = vowelcodes[num]
+        end
+    end
+    return input
+    end
+    ```
+
+    so a few of things I noticed:
+
+    it was nice to define an actual example of data above the function almost as a test case
+
+    as I was writing `input[i] = vowelcodes[num]`, I felt that there are two types of assignment
+
+        1. change what this name means here
+        2. swap out the value of this name
+
+        i think i've heard of a concept called shadowing that might refer to one of these
+
+        I know that for example in golang and other languages, you can differentiate by passing pointers vs actual values
+
+        but I think in the above example the actual intuitive thing is to view the `num` as something to 'swap out' and write `num = vowelcodes[num]` or something like `replace num with vowelcodes[num]`
+
+    if you think about it, how python works is actually confusing, because for arrays doing `array[i] = ` IS changing out a value, but `var = ` is just reassigning the name
+
+    why treat simple data different than complex data? shouldn't we be able to view them all as fundamentally the same in that we can do both?
+
+    I think easily interfacing with data structures is paramount to being able to flow with a language (arrays, structs, etc)
+
+** Starting from a new angle with syntax
+
+    Let's start with the explicit representation of the code using
+
+    `func(arg1, arg2)` syntax instead of `(func arg1 arg2)`
+
+    It just feels more natural to me and I can think easier with that representation. It allows for the same core concept of lists as basic building blocks of the language.
+
+    here is some example code
+
+    #+BEGIN_SRC go
+        define(plus(a, b), +(a, b))
+
+        define(plus_echo(a, b), do(set(num, +(a, b)), echo(num)))
+
+        define(
+        plus_echo(a, b),
+        do(
+            set(num, +(a, b)),
+            echo(num)
+        )
+        )
+    #+END_SRC
+
+    I think this makes it a lot clearer and honestly more homoiconic than the traditional lisp syntax.
+
+    so the question is how do we get from that to something that makes use of whitespace but still retains the simplicity and homoiconicity?
+
+    let's start by defining the base construct as a word
+
+    `define` is a word
+
+    a word followed by parens is a function call
+
+    `define()` is a function call to the function named `define`
+
+    in between the `()` can be a list of arguments separated by `,`
+
+    `define(arg1, arg2)` calls the `define` function with the arguments `arg1` and `arg2`
+
+*** an aside: some misc ideas for the language
+
+    * have a away to define sections to output running of code in like
+
+    #+BEGIN_SRC go
+    1   define(myfunc(word), do(print(word)))
+    2   // somedata = "hello"
+    3   // myfunc(somedata)
+    4   //     > hello
+    5   // end
+    #+END_SRC
+
+    So imagine after you edit the function definition and save the file, you automatically see the output of the test under it
+
+    * i forgot the other idea... shoot was on the tip of my tongue
+
+** implementing whitespace into the syntax
+
+    So let's revisit our rules
+
+    * the basic construct is a word
+        + define
+    * a sentence is a list of words
+        + define myfunction
+    * words in a sentence are separated by commas and inside of parens
+        + (define, myfunction)
+    * a sentence represents a set of instructions
+    * to enact the instructions NOW, we use parens
+        + define(myfunction, ...)
+
+    So how do we implement whitespace here?
+
+    Can we say that if you separate words by a space instead of a comma, it is an action instead of just a list?
+
+    `define(myfunction(args) body)`
+
+    `define myfunction(args) body`
+
+    what about indentation though?
+
+    lets say body has multiple actions and we want to separate them on each line
+
+    #+BEGIN_SRC py
+        body(
+            action1,
+            action2,
+            action3
+        )
+
+    #+END_SRC
+
+    let's say an action can use a newline+indent instead of comma
+
+    each sentence with the same indent will be included in its list
+
+    #+BEGIN_SRC py
+        prevarg # , (
+            action1 # ,
+            action2 # ,
+            action3
+        # )
+    #+END_SRC
+
+    so in this way we could write a definition as such
+
+    #+BEGIN_SRC py
+        define myfunc(args)
+            something(args)
+            somethingelse(args)
+    #+END_SRC
+
+    if we later allow functions/macros to consume following terms we could potentially get rid of the above comma, but not focusing on that now
+
+    it would be able to handle multiple levels as well
+
+    assuming a switch would look like
+
+    `switch(case1, execifcase1, case2, execifcase2...)`
+
+    we could do
+    #+BEGIN_SRC py
+        define myfunc(arg)
+            switch
+                =(arg, true)
+                    something()
+                =(arg, false)
+                    somethingelse()
+    #+END_SRC
+
+    which would be the same as
+
+    #+BEGIN_SRC py
+        define(myfunc(arg), (
+            switch(
+                =(arge, true),
+                (something()),
+                =(arg, false),
+                (somethingelse())
+            )
+        ))
+    #+END_SRC
+
+    ..I think
