@@ -310,7 +310,7 @@ possible name: rubber
 
     ..I think
 
-* Update as of 6/28/2023
+* Update as of 6/28/2025
 
     So far everything is going well. Tokenizer and parser implemented.
 
@@ -327,3 +327,35 @@ possible name: rubber
     I could either convert it to a string representation or see if it's possible to convert straight to bytecode or something like that.
 
     The whole point after all is to see how it feels to work with a lisp with this syntax.
+
+* New ideas on 6/29/2025
+
+    So I'm thinking to change up a bit how indentation works to allow for better syntax
+
+    instead of a dedent automatically being a close out, we will use a do and end keyword set
+
+    also, anything inside an indent will be treated as a block or list instead of individual items, and anything on the same indentation but before an end will be a continuation
+
+    so
+
+    ```rubber
+    if odd(num) do
+        print("odd")
+    if even(num) do
+        print("even")
+    else do
+        print("neither")
+    end
+    ```
+
+    results in
+
+    ```lisp
+    (if (odd num) ((print "odd"))
+        (if (even num) ((print "even"))
+        (else (print "neither))
+        )
+    )
+    ```
+    
+    do captures everything into a block (list) until the next dedented line

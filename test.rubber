@@ -1,0 +1,9 @@
+define plus(x, y)
+	+ x y
+
+plus 1 5
+
+define div(a, b)
+	/ a b
+
+div 9 20

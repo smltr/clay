@@ -2,53 +2,47 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"os"
+	"os/exec"
 )
 
-// printExplicit not really a part of the main pipeline right now
-// just want to be able to test out end to end visually
-func printExplicit(node *Node) string {
-	if node == nil {
-		return ""
-	}
-
-	switch node.Type {
-	case ITEM:
-		// Function references and simple values - just print the name
-		return node.Value
-
-	case LIST:
-		// Function calls - print as funcname(args...)
-		if len(node.Children) == 0 {
-			return node.Value + "()"
-		}
-
-		args := make([]string, len(node.Children))
-		for i, child := range node.Children {
-			args[i] = printExplicit(child)
-		}
-		return node.Value + "(" + strings.Join(args, ", ") + ")"
-
-	default:
-		return ""
-	}
-}
-
-var code = `
-define myfunc(a, b)
-		plus(a, b)
-
-myfunc 1 2
-`
-
-func pipe(s string) any {
-	env := NewEnvironment(nil)
-	setupBuiltins(env)
-
-	return eval(parse(tokenize(s)), env)
-}
-
 func main() {
-	res := pipe(code)
-	fmt.Printf("%+v\n", res)
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run . <filename>")
+		os.Exit(1)
+	}
+
+	filename := os.Args[1]
+
+	// Read the file
+	fmt.Println("reading file ", filename)
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Transpile to Racket
+	fmt.Println("getting string")
+	code := string(content)
+	fmt.Println("tokenizing")
+	tokens := tokenize(code)
+	fmt.Println("parsing")
+	tree := parse(tokens)
+	fmt.Println("transpiling to racket")
+	racketCode := transpile(tree)
+
+	fmt.Printf("Transpiled code:\n%s\n\n", racketCode)
+
+	// Run in Racket
+	cmd := exec.Command("racket", "-e", racketCode)
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		fmt.Printf("Error running Racket: %v\n", err)
+		fmt.Printf("Racket output: %s\n", string(output))
+		os.Exit(1)
+	}
+
+	fmt.Printf("Output:\n%s", string(output))
 }
