@@ -2,6 +2,8 @@
 
 I've had this idea for a while around creating a language that clicked with me.
 
+possible name: rubber
+
 ** Some ideas
 
   clean but also meaningful syntax
@@ -307,3 +309,21 @@ I've had this idea for a while around creating a language that clicked with me.
     #+END_SRC
 
     ..I think
+
+* Update as of 6/28/2023
+
+    So far everything is going well. Tokenizer and parser implemented.
+
+    Some things to note:
+
+        * There is a SPACE token separate from INDEND/DEDENT because our language is sensitive to spaces
+
+        * For parser, everything is represented as a LIST of ITEMs (both nodes)
+
+    A little bit later in the day...
+
+    Why don't I skip implementing eval right now and just convert the AST to another lisp?
+
+    I could either convert it to a string representation or see if it's possible to convert straight to bytecode or something like that.
+
+    The whole point after all is to see how it feels to work with a lisp with this syntax.
