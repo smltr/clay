@@ -1,0 +1,78 @@
+Language concept
+
+I've had this idea for a while around creating a language that clicked with me.
+
+possible name: clay
+
+Some ideas
+
+  clean but also meaningful syntax
+
+  how do I say it in my head when I type it?
+
+  thoughtful and useful constructs
+  - nice loops
+    - easily map/reduce maybe, but in a more intuitive way
+
+
+  - use of symbols instead of words for language constructs
+    - possibly all built in funcs could be behind a symbol representing the package containing built ins
+    - @.len()
+
+  ability to extend or change syntax
+     don't like how loops are worded? change 'for' to 'loop'
+
+  nice repl where you can edit previous lines easily
+
+  easy prints/debugging mode
+
+  easily define tests, possibly near functions as part of the definition
+
+  easy way to interface with other files
+     i like go's //embed
+     easy way to define test data
+
+  be able to define types and structs but also dynamic for easy prototyping
+
+  intuitive typing with logic
+     type BigNumber = Number that's > 100
+     this would be like an abstract type instead of using a where clause on function signature
+
+What I like/don't like about other languages:
+
+    * Golang:
+        + simple and easy for loops and ranges
+        + fast
+        + great standard packages
+        + easy to define structs and types
+        - Not interactive
+        - no repl
+        - if err != nil
+        - no way to extend language
+    * Elixir:
+        + Very interactive, iex
+        + clean syntax
+        - not easy to define custom data types
+        - Hard to reason about looping over list (e.g. Enum.graphemes())
+        - only one paradigm, functional
+
+Common tools that need to be in a language:
+
+    + Defining what stuff looks like: Being able to define custom types, especially with fields is important
+    + Defining what stuff does: Functions
+    + Separating stuff: Modules, namespaces
+
+Things I encounter that stop me from wanting to start a project:
+
+    - not easy to quickly get to feedback loop where I can see what I'm doing
+    - moving between code files and terminal or web browser
+    - defining tests being cumbersome or not obvious
+
+    - trying to remember language constructs if it's a language I'm not familiar with
+    - not easily being able to navigate language constructs with autocomplete
+    - sure, if I remember that there is a strings package, I can type strings. and see some suggestions, but how do I easily bring up that there is a strings package?
+
+    - trying to decide how to structure files and modules
+    - I should be able to just start typing some code and get immediate feedback, not have to think through structure
+    - project should be like clay. just lay a lump down and start pulling parts out
+    - I should always be able to start with just one file in a directory

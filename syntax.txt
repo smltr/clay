@@ -1,0 +1,38 @@
+How the syntax should work
+==========================
+
+words followed by a space and then another word are function calls
+
+`func arg1 arg2` -> `(func arg1 arg2)`
+
+parentheses around words separated by commas creates a list
+
+`func arg1 (arg2, arg3)` -> `(func arg1 (list arg2 arg3))`
+
+a word combined with a list is an explicit function call
+
+`func(arg1, arg2)` -> `(func arg1 arg2)`
+
+a newline followed by a tab also creates a list
+
+```
+func arg1
+	arg2
+	arg3
+```
+
+results in `(func arg1 (list arg2 arg3))`
+
+this will be good for things like defining functions
+
+```
+define myfunc()
+	something
+displayln myfunc()
+```
+results in
+
+```
+(define (myfunc) (list something))
+(displayln (myfunc))
+```
