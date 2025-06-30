@@ -69,3 +69,30 @@ func TestTranspileMultipleExpressions(t *testing.T) {
 		}
 	}
 }
+
+func TestTranspileDoEnd(t *testing.T) {
+	testCases := map[string]string{
+		// Basic do/end blocks
+		"print do\nhello\nend":               "(print hello)",
+		"func do\narg1\narg2\nend":           "(func arg1 arg2)",
+		"func do\n\targ1\n\targ2\nend":       "(func (list arg1 arg2))",
+		"func do\narg1\n\targa\n\targb\nend": "(func arg1 (arga argb))",
+		"func arg1 do\narg2\nend":            "(func arg1 arg2)",
+		"func arg1 arg2 do\narg3\narg4\nend": "(func arg1 arg2 arg3 arg4)",
+
+		// Nested do/end
+		"func do\narg1 do\n\targa\n\targb\nend\nend": "(func (arg1 (arga argb)))",
+
+		// Empty do block
+		"func do\nend": "(func)"}
+
+	for input, expected := range testCases {
+		tokens := tokenize(input)
+		tree := parse(tokens)
+		result := transpile(tree)
+
+		if result != expected {
+			t.Errorf("For input %q:\nExpected: %s\nGot: %s", input, expected, result)
+		}
+	}
+}

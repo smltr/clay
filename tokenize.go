@@ -18,6 +18,8 @@ const (
 	RPAREN
 	COMMA
 	SPACE
+	DO
+	END
 	EOF
 )
 
@@ -98,11 +100,21 @@ func tokenize(s string) []Token {
 					col++
 					i++
 				}
-				tokens = append(tokens, Token{WORD, word, line, startCol})
-			} else {
-				col++
-				i++
+
+				// Check for special keywords
+				var tokenType TokenType
+				switch word {
+				case "do":
+					tokenType = DO
+				case "end":
+					tokenType = END
+				default:
+					tokenType = WORD
+				}
+
+				tokens = append(tokens, Token{tokenType, word, line, startCol})
 			}
+
 		}
 	}
 
