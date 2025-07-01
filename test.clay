@@ -1,45 +1,12 @@
 #lang reader "lang.rkt"
 
-displayln("Clay test suite")
-displayln("=================")
+displayln "Tests starting!\n==============="
 
-displayln("testing comments")
-; testing comments
-displayln("✓ PASSED")
-
-define assert(condition, condition)
-	unless condition error(message)
-
-define test(name, body)
-	displayln string-append("Testing: ", name)
-	body
-	displayln("✓ PASSED")
-
-define(plus(a, b), +(a, b))
-
-test "defining a function and using math"
-	assert "plus(1, 2) should be 3" equal?(plus(1 2) 3)
-
-define minus(a, b) -(a, b)
-
-test "defining a function using whitepsace to separate arguments"
-	assert "minus(2, 1) should be 1"
-		equal? minus(2, 1), 1
-
-define multiply(a, b)
-	* a b
-
-test "defining a function using whitespace to separate arguments"
-	assert "multiply(2, 3) should be 6"
-		equal?(multiply(2, 3), 6)
-
-test "this test uses whitespace and indentation"
-	assert "multiply(4, 2) should be 8" equal?(multiply(4, 2), 8)
-
-define double(num)
-	define res multiply(num, 2)
-	res
-
-test "defining a function with multiple indented lines and a variable definition"
-	assert "double(2) should be 4"
-		equal?(double(2), 4)
+define evenorodd(n) do
+    cond do
+        equal? remainder(n, 2) do
+            "odd"
+        end
+        "even"
+    end
+end
